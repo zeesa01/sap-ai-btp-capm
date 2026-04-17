@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HR Management Portal</title>
+
+    <!--
+        SAP UI5 Bootstrap Script
+        ========================
+        This single <script> tag loads the entire SAP UI5 framework from SAP's CDN.
+
+        data-sap-ui-theme        : Visual theme. "sap_horizon" is the latest Fiori 3 Next theme.
+                                   Other options: sap_fiori_3, sap_belize (older).
+        data-sap-ui-libs         : Pre-load these UI5 library modules at startup.
+                                   sap.m          = Mobile-first controls (Button, Table, List, etc.)
+                                   sap.tnt        = Tool Page, Side Navigation (the shell layout)
+                                   sap.f          = Fiori controls (FlexibleColumnLayout, ObjectPage)
+                                   sap.ui.layout  = Form layouts, Grid
+                                   sap.ui.unified = Calendar, ColorPicker
+        data-sap-ui-resourceroots: Maps our app namespace "hr.fiori" to the folder "./"
+                                   So "hr.fiori.view.Home" resolves to ./view/Home.view.xml
+        data-sap-ui-onInit       : The first function to call once UI5 is loaded.
+                                   We call sap.ui.core.ComponentSupport.run() which finds
+                                   the <div data-sap-ui-component> below and creates our app.
+        data-sap-ui-compatVersion: "edge" = use the latest UI5 features, no legacy compat.
+        data-sap-ui-async        : true = load modules asynchronously (better performance).
+        data-sap-ui-frameOptions : "trusted" = allow embedding (needed for Fiori Launchpad).
+    -->
+    <script
+        src="https://ui5.sap.com/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-libs="sap.m,sap.tnt,sap.f,sap.ui.layout,sap.ui.unified"
+        data-sap-ui-resourceroots='{ "hr.fiori": "./" }'
+        data-sap-ui-onInit="module:sap/ui/core/ComponentSupport"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted">
+    </script>
+</head>
+<body class="sapUiBody" id="content">
+    <!--
+        This div is the mount point for our UI5 Component.
+        data-sap-ui-component : tells UI5 to create a Component here
+        data-name             : the Component ID (maps to Component.js via resourceroots above)
+        data-settings         : JSON settings passed to Component constructor
+        data-handle-validation: UI5 handles form validation automatically
+    -->
+    <div
+        data-sap-ui-component
+        data-name="hr.fiori"
+        data-settings='{"id":"hr.fiori"}'
+        data-handle-validation="true"
+        style="height:100%">
+    </div>
+</body>
+</html>

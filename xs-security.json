@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json.schemastore.org/sap-xs-security",
+  "xsappname": "mybtpcapmaiproject",
+  "tenant-mode": "dedicated",
+
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.HRAdmin",
+      "description": "Full HR administration access — can manage all employees, payroll, settings"
+    },
+    {
+      "name": "$XSAPPNAME.Manager",
+      "description": "Manager access — can view team, approve/reject leave requests, view performance reviews"
+    },
+    {
+      "name": "$XSAPPNAME.Employee",
+      "description": "Employee self-service — can view own data, submit leave requests, view own payslips"
+    }
+  ],
+
+  "role-templates": [
+    {
+      "name": "HRAdmin",
+      "description": "HR Administrator",
+      "scope-references": ["$XSAPPNAME.HRAdmin", "$XSAPPNAME.Manager", "$XSAPPNAME.Employee"]
+    },
+    {
+      "name": "Manager",
+      "description": "Team Manager",
+      "scope-references": ["$XSAPPNAME.Manager", "$XSAPPNAME.Employee"]
+    },
+    {
+      "name": "Employee",
+      "description": "Regular Employee",
+      "scope-references": ["$XSAPPNAME.Employee"]
+    }
+  ],
+
+  "role-collections": [
+    {
+      "name": "HR_Admin_Collection",
+      "description": "For HR administrators",
+      "role-template-references": ["$XSAPPNAME.HRAdmin"]
+    },
+    {
+      "name": "Manager_Collection",
+      "description": "For team managers",
+      "role-template-references": ["$XSAPPNAME.Manager"]
+    },
+    {
+      "name": "Employee_Collection",
+      "description": "For all employees",
+      "role-template-references": ["$XSAPPNAME.Employee"]
+    }
+  ]
+}

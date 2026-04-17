@@ -1,0 +1,28 @@
+{
+  "name": "mybtpcapmaiproject",
+  "version": "1.0.0",
+  "description": "SAP BTP CAP HR App with AI (Claude/Anthropic)",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@sap/cds": "^9"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "dev": "cds watch",
+    "build": "cds build --production"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "database": ":memory:"
+        }
+      }
+    }
+  },
+  "private": true
+}

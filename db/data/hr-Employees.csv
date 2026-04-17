@@ -1,0 +1,6 @@
+ID,firstName,lastName,email,phone,employeeId,jobTitle,employmentType,startDate,status,department_ID,baseSalary,currency
+emp-1,Sarah,Johnson,sarah.johnson@company.com,+1-555-0101,EMP-0001,HR Director,Full-Time,2020-01-15,Active,dept-1,95000,USD
+emp-2,Michael,Chen,michael.chen@company.com,+1-555-0102,EMP-0002,Senior Engineer,Full-Time,2021-03-01,Active,dept-2,120000,USD
+emp-3,Amira,Patel,amira.patel@company.com,+1-555-0103,EMP-0003,Finance Manager,Full-Time,2019-06-10,Active,dept-3,85000,USD
+emp-4,James,Wilson,james.wilson@company.com,+1-555-0104,EMP-0004,Sales Executive,Full-Time,2022-08-20,Active,dept-4,70000,USD
+emp-5,Lisa,Nguyen,lisa.nguyen@company.com,+1-555-0105,EMP-0005,Marketing Specialist,Full-Time,2023-02-01,Active,dept-5,65000,USD

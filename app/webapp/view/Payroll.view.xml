@@ -1,0 +1,65 @@
+<mvc:View
+    controllerName="hr.fiori.controller.Payroll"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page id="payrollPage" title="{i18n>payrollTitle}">
+        <headerContent>
+            <Button text="{i18n>newPayrollRecord}" icon="sap-icon://add" type="Emphasized" press=".onNewRecord"/>
+            <Button text="{i18n>detectAnomalies}" icon="sap-icon://alert" type="Attention" press=".onDetectAnomalies" class="sapUiSmallMarginBegin"/>
+        </headerContent>
+        <content>
+            <Table
+                id="payrollTable"
+                items="{
+                    path: '/PayrollRecords',
+                    parameters: { $expand: 'employee', $orderby: 'year desc,month desc' }
+                }"
+                growing="true" growingThreshold="15" noDataText="{i18n>noData}">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Payroll Records" level="H3"/>
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://refresh" type="Transparent" press=".onRefresh"/>
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column><Text text="Employee"/></Column>
+                    <Column><Text text="Period"/></Column>
+                    <Column hAlign="End"><Text text="Base Salary"/></Column>
+                    <Column hAlign="End"><Text text="Bonus"/></Column>
+                    <Column hAlign="End"><Text text="Tax"/></Column>
+                    <Column hAlign="End"><Text text="Net Pay"/></Column>
+                    <Column><Text text="Status"/></Column>
+                    <Column><Text text="AI Flag"/></Column>
+                    <Column hAlign="Center"><Text text="Actions"/></Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{employee/firstName} {employee/lastName}"/>
+                            <Text text="{month}/{year}"/>
+                            <ObjectNumber number="{baseSalary}" unit="USD"/>
+                            <ObjectNumber number="{bonus}" unit="USD"/>
+                            <ObjectNumber number="{tax}" unit="USD"/>
+                            <ObjectNumber number="{netPay}" unit="USD" emphasized="true"
+                                state="{= ${netPay} > 0 ? 'Success' : 'Error'}"/>
+                            <ObjectStatus
+                                text="{status}"
+                                state="{= ${status} === 'Paid' ? 'Success' : ${status} === 'Processed' ? 'Warning' : 'None'}"/>
+                            <ObjectStatus
+                                text="{= ${aiAnomalyFlag} ? 'Flagged' : 'OK'}"
+                                state="{= ${aiAnomalyFlag} ? 'Error' : 'Success'}"
+                                icon="{= ${aiAnomalyFlag} ? 'sap-icon://alert' : 'sap-icon://accept'}"/>
+                            <FlexBox>
+                                <Button icon="sap-icon://simulate" type="Transparent" press=".onCalculate" tooltip="Calculate Net Pay"/>
+                            </FlexBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

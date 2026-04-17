@@ -1,0 +1,206 @@
+<!--
+    Home.view.xml — Dashboard
+    ==========================
+    Uses sap.m.Page as the outer container.
+    The KPI tiles use sap.m.GenericTile — SAP's standard KPI tile control.
+    Tiles are arranged in a sap.m.TileContainer (or a FlexBox grid).
+-->
+<mvc:View
+    controllerName="hr.fiori.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core">
+
+    <Page
+        id="homePage"
+        title="{i18n>dashboardTitle}"
+        showNavButton="false">
+
+        <content>
+
+            <!-- ── KPI TILES ROW ───────────────────────────────────────── -->
+            <Panel
+                headerText="Key Metrics"
+                class="sapUiResponsiveMargin"
+                width="auto">
+                <content>
+                    <FlexBox
+                        wrap="Wrap"
+                        justifyContent="SpaceAround"
+                        class="sapUiSmallMargin">
+
+                        <!-- Total Employees tile -->
+                        <GenericTile
+                            id="tileEmployees"
+                            header="{i18n>totalEmployees}"
+                            press=".onNavigateEmployees"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom"
+                            frameType="TwoByOne">
+                            <tileContent>
+                                <TileContent>
+                                    <content>
+                                        <NumericContent
+                                            value="{kpi>/totalEmployees}"
+                                            scale=""
+                                            valueColor="Good"
+                                            icon="sap-icon://group"/>
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+
+                        <!-- Pending Leave tile -->
+                        <GenericTile
+                            id="tilePendingLeave"
+                            header="{i18n>openLeaves}"
+                            press=".onNavigateLeave"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom"
+                            frameType="TwoByOne">
+                            <tileContent>
+                                <TileContent>
+                                    <content>
+                                        <NumericContent
+                                            value="{kpi>/pendingLeaves}"
+                                            valueColor="Critical"
+                                            icon="sap-icon://request"/>
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+
+                        <!-- Open Positions tile -->
+                        <GenericTile
+                            id="tileOpenPositions"
+                            header="{i18n>openPositions}"
+                            press=".onNavigateRecruitment"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom"
+                            frameType="TwoByOne">
+                            <tileContent>
+                                <TileContent>
+                                    <content>
+                                        <NumericContent
+                                            value="{kpi>/openPositions}"
+                                            valueColor="Neutral"
+                                            icon="sap-icon://employee-lookup"/>
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+
+                        <!-- Pending Reviews tile -->
+                        <GenericTile
+                            id="tilePendingReviews"
+                            header="{i18n>pendingReviews}"
+                            press=".onNavigatePerformance"
+                            class="sapUiSmallMarginBottom"
+                            frameType="TwoByOne">
+                            <tileContent>
+                                <TileContent>
+                                    <content>
+                                        <NumericContent
+                                            value="{kpi>/pendingReviews}"
+                                            valueColor="Critical"
+                                            icon="sap-icon://manager-insight"/>
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+
+                    </FlexBox>
+                </content>
+            </Panel>
+
+            <!-- ── QUICK ACTIONS ──────────────────────────────────────── -->
+            <Panel
+                headerText="{i18n>quickActions}"
+                class="sapUiResponsiveMargin"
+                width="auto">
+                <content>
+                    <FlexBox wrap="Wrap" class="sapUiSmallMargin" alignItems="Center">
+                        <Button
+                            text="{i18n>addEmployee}"
+                            icon="sap-icon://add-employee"
+                            type="Emphasized"
+                            press=".onAddEmployee"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+                        <Button
+                            text="{i18n>submitLeave}"
+                            icon="sap-icon://request"
+                            type="Default"
+                            press=".onSubmitLeave"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+                        <Button
+                            text="{i18n>newJobPosting}"
+                            icon="sap-icon://employee-lookup"
+                            type="Default"
+                            press=".onNewJobPosting"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom"/>
+                        <Button
+                            text="{i18n>navAIAssistant}"
+                            icon="sap-icon://da"
+                            type="Attention"
+                            press=".onOpenAIAssistant"
+                            class="sapUiSmallMarginBottom"/>
+                    </FlexBox>
+                </content>
+            </Panel>
+
+            <!-- ── DEPARTMENT STATS TABLE ─────────────────────────────── -->
+            <Panel
+                headerText="Department Overview"
+                class="sapUiResponsiveMargin"
+                width="auto"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <Table
+                        id="deptTable"
+                        items="{deptStats>/}"
+                        noDataText="No department data">
+                        <columns>
+                            <Column><Text text="Department"/></Column>
+                            <Column hAlign="End"><Text text="Headcount"/></Column>
+                            <Column hAlign="End"><Text text="Avg Salary (USD)"/></Column>
+                            <Column hAlign="End"><Text text="Pending Leaves"/></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text text="{deptStats>departmentName}"/>
+                                    <ObjectNumber number="{deptStats>headcount}" unit=""/>
+                                    <ObjectNumber number="{deptStats>avgSalary}" unit="USD"/>
+                                    <ObjectStatus
+                                        text="{deptStats>openLeaves}"
+                                        state="{= ${deptStats>openLeaves} > 0 ? 'Warning' : 'Success'}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </content>
+            </Panel>
+
+            <!-- ── UPCOMING LEAVES ─────────────────────────────────────── -->
+            <Panel
+                headerText="Upcoming Leaves (Next 14 Days)"
+                class="sapUiResponsiveMargin"
+                width="auto"
+                expandable="true"
+                expanded="true">
+                <content>
+                    <List
+                        id="upcomingLeaveList"
+                        items="{upcomingLeaves>/}"
+                        noDataText="No upcoming leaves">
+                        <StandardListItem
+                            title="{upcomingLeaves>employeeName}"
+                            description="{upcomingLeaves>leaveType}"
+                            info="{upcomingLeaves>startDate} → {upcomingLeaves>endDate} ({upcomingLeaves>totalDays} days)"
+                            infoState="Warning"/>
+                    </List>
+                </content>
+            </Panel>
+
+        </content>
+    </Page>
+</mvc:View>

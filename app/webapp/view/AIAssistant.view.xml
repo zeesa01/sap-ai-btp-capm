@@ -1,0 +1,127 @@
+<!--
+    AIAssistant.view.xml — Smart HR Assistant Chat Interface
+    =========================================================
+    Custom chat UI built with standard SAP UI5 controls.
+    The AI is branded only as "Smart HR Assistant" — no third-party AI
+    provider names are shown anywhere in the UI.
+
+    Layout:
+    ┌──────────────────────────────────────────────┐
+    │  Smart HR Assistant  [Clear]                  │  ← Header
+    ├──────────────────────────────────────────────┤
+    │                                               │
+    │   💬 Hello! I am your Smart HR Assistant...   │  ← Chat scroll area
+    │                              You: How do I... │
+    │   Assistant: To apply for leave...            │
+    │                                               │
+    ├──────────────────────────────────────────────┤
+    │  [Type your question...]          [Send →]   │  ← Input bar
+    └──────────────────────────────────────────────┘
+-->
+<mvc:View
+    controllerName="hr.fiori.controller.AIAssistant"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
+
+    <Page
+        id="aiPage"
+        title="{i18n>aiAssistantTitle}"
+        showNavButton="false">
+
+        <headerContent>
+            <Button
+                text="{i18n>aiClear}"
+                icon="sap-icon://clear-all"
+                type="Transparent"
+                press=".onClearChat"/>
+        </headerContent>
+
+        <subHeader>
+            <Bar>
+                <contentMiddle>
+                    <Text
+                        text="{i18n>aiAssistantSubtitle}"
+                        class="sapUiSmallFont"/>
+                </contentMiddle>
+            </Bar>
+        </subHeader>
+
+        <content>
+
+            <!-- ── CHAT MESSAGE SCROLL CONTAINER ─────────────────────── -->
+            <!--
+                We use a ScrollContainer so the chat history is scrollable
+                while the input bar stays fixed at the bottom (in the footer).
+            -->
+            <ScrollContainer
+                id="chatScrollContainer"
+                height="100%"
+                width="100%"
+                vertical="true"
+                horizontal="false">
+
+                <VBox
+                    id="chatMessages"
+                    class="sapUiResponsiveMargin"
+                    width="auto">
+
+                    <!-- Messages are added here dynamically by the controller -->
+                    <!-- Initial welcome message -->
+                    <HBox
+                        id="welcomeMsg"
+                        class="sapUiSmallMarginBottom">
+
+                        <!-- Avatar for the assistant -->
+                        <Avatar
+                            initials="HR"
+                            displaySize="S"
+                            backgroundColor="Accent5"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginTop"/>
+
+                        <!-- Message bubble -->
+                        <Panel
+                            width="75%"
+                            class="sapUiTinyMarginTop">
+                            <content>
+                                <Text
+                                    text="{i18n>aiWelcome}"
+                                    wrapping="true"
+                                    class="sapUiSmallMargin"/>
+                            </content>
+                        </Panel>
+                    </HBox>
+
+                </VBox>
+            </ScrollContainer>
+
+        </content>
+
+        <!-- ── FIXED INPUT BAR AT BOTTOM ──────────────────────────────── -->
+        <!--
+            The footer sticks to the bottom of the page.
+            We put the text input + Send button here.
+        -->
+        <footer>
+            <Bar>
+                <contentMiddle>
+                    <Input
+                        id="chatInput"
+                        width="100%"
+                        placeholder="{i18n>aiInputPlaceholder}"
+                        submit=".onSendMessage"/>
+                </contentMiddle>
+                <contentRight>
+                    <Button
+                        id="sendButton"
+                        text="{i18n>aiSend}"
+                        type="Emphasized"
+                        icon="sap-icon://paper-plane"
+                        press=".onSendMessage"/>
+                </contentRight>
+            </Bar>
+        </footer>
+
+    </Page>
+</mvc:View>

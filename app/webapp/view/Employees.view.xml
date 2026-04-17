@@ -1,0 +1,131 @@
+<!--
+    Employees.view.xml — Employee List
+    =====================================
+    Pattern: sap.m.Page with a toolbar (search + create button) + sap.m.Table.
+
+    OData Binding Explained:
+    - items="{/Employees}"  → binds the table to the Employees entity set
+    - {firstName}           → binds a cell to the firstName property of each row's entity
+    - $expand=department    → join the related Department record for each employee
+-->
+<mvc:View
+    controllerName="hr.fiori.controller.Employees"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Page
+        id="employeesPage"
+        title="{i18n>employeeListTitle}"
+        showNavButton="false">
+
+        <!-- ── PAGE HEADER TOOLBAR ──────────────────────────────────── -->
+        <headerContent>
+            <Button
+                text="{i18n>newEmployee}"
+                icon="sap-icon://add-employee"
+                type="Emphasized"
+                press=".onCreateEmployee"/>
+        </headerContent>
+
+        <content>
+            <!-- Search and Filter Bar -->
+            <Toolbar class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginTop">
+                <SearchField
+                    id="employeeSearch"
+                    placeholder="{i18n>search}"
+                    width="300px"
+                    search=".onSearch"
+                    liveChange=".onSearch"/>
+                <ToolbarSpacer/>
+                <Select id="statusFilter" change=".onFilterChange">
+                    <core:Item key="" text="All Statuses"/>
+                    <core:Item key="Active" text="Active"/>
+                    <core:Item key="On Leave" text="On Leave"/>
+                    <core:Item key="Terminated" text="Terminated"/>
+                </Select>
+            </Toolbar>
+
+            <!-- Employee Table -->
+            <Table
+                id="employeeTable"
+                items="{
+                    path: '/Employees',
+                    parameters: {
+                        $expand: 'department',
+                        $orderby: 'firstName asc'
+                    }
+                }"
+                growing="true"
+                growingThreshold="20"
+                noDataText="{i18n>noData}"
+                selectionChange=".onSelectionChange">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="{i18n>employeeListTitle}" level="H3"/>
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://refresh" type="Transparent" press=".onRefresh" tooltip="Refresh"/>
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column width="3rem"/>
+                    <Column><Text text="{i18n>firstName}"/></Column>
+                    <Column><Text text="{i18n>lastName}"/></Column>
+                    <Column><Text text="{i18n>jobTitle}"/></Column>
+                    <Column><Text text="{i18n>department}"/></Column>
+                    <Column><Text text="{i18n>employmentType}"/></Column>
+                    <Column><Text text="{i18n>status}"/></Column>
+                    <Column hAlign="End"><Text text="{i18n>baseSalary}"/></Column>
+                    <Column hAlign="Center"><Text text="{i18n>actions}"/></Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem
+                        press=".onEmployeePress"
+                        type="Navigation">
+                        <cells>
+                            <!-- Avatar with employee initials -->
+                            <Avatar
+                                initials="{= ${firstName}.charAt(0) + ${lastName}.charAt(0) }"
+                                displaySize="XS"
+                                backgroundColor="Accent1"/>
+
+                            <Text text="{firstName}"/>
+                            <Text text="{lastName}"/>
+                            <Text text="{jobTitle}"/>
+                            <Text text="{department/name}"/>
+                            <Text text="{employmentType}"/>
+
+                            <!-- ObjectStatus shows status with color coding -->
+                            <ObjectStatus
+                                text="{status}"
+                                state="{= ${status} === 'Active' ? 'Success' : ${status} === 'On Leave' ? 'Warning' : 'Error'}"/>
+
+                            <ObjectNumber
+                                number="{baseSalary}"
+                                unit="{currency}"
+                                state="None"/>
+
+                            <!-- Action buttons per row -->
+                            <FlexBox>
+                                <Button
+                                    icon="sap-icon://edit"
+                                    type="Transparent"
+                                    press=".onEditEmployee"
+                                    tooltip="Edit Employee"/>
+                                <Button
+                                    icon="sap-icon://delete"
+                                    type="Transparent"
+                                    press=".onDeleteEmployee"
+                                    tooltip="Delete Employee"/>
+                            </FlexBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+
+    </Page>
+</mvc:View>

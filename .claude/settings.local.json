@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx cds *)",
+      "Bash(node_modules/.bin/cds compile *)",
+      "Bash(node *)",
+      "Bash(curl -s http://localhost:4004/)",
+      "Bash(curl -s \"http://localhost:4004/hr/Employees\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s \"http://localhost:4004/hr/Departments\")",
+      "Bash(curl -s 'http://localhost:4004/hr/Employees?$expand=department&$filter=status eq '\\\\''Active'\\\\''')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(e['firstName'], e['lastName'], '→', e.get\\('department',{}\\).get\\('name','?'\\)\\) for e in d['value']]\")",
+      "Bash(curl -s 'http://localhost:4004/hr/Employees?$expand=department')",
+      "Bash(python3 -c \"import json,sys; d=json.loads\\(sys.stdin.read\\(\\)\\); [print\\(e['firstName'],e['lastName'],'→',e.get\\('department',{}\\).get\\('name','?'\\)\\) for e in d['value']]\")",
+      "Bash(curl -s http://localhost:4004/hr/Employees)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Employees:', len\\(d['value']\\), '| First:', d['value'][0]['firstName'], d['value'][0]['lastName']\\)\")",
+      "Bash(curl -s -X POST http://localhost:4004/hr/JobPostings -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Created posting ID:', d.get\\('ID'\\), '| Title:', d.get\\('title'\\), '| Status:', d.get\\('status'\\)\\)\")",
+      "Bash(curl -s http://localhost:4004/hr/JobPostings)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Application created ID:', d.get\\('ID'\\), '| Candidate:', d.get\\('candidateName'\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:4004/hr/LeaveRequests -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Leave created ID:', d.get\\('ID'\\), '| Days:', d.get\\('totalDays'\\), '| Status:', d.get\\('status'\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Leave ID:', d.get\\('ID'\\), '| Days:', d.get\\('totalDays'\\), '| Status:', d.get\\('status'\\)\\)\")",
+      "Bash(curl -s http://localhost:4004/hr/LeaveRequests)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Result:', d.get\\('value'\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:4004/hr/PayrollRecords -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Payroll ID:', d.get\\('ID'\\), '| Month:', d.get\\('month'\\), '/', d.get\\('year'\\), '| Status:', d.get\\('status'\\)\\)\")",
+      "Bash(curl -s http://localhost:4004/hr/PayrollRecords)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); v=d.get\\('value',{}\\); print\\('Net Pay:', v.get\\('netPay'\\), '| Breakdown:', v.get\\('breakdown'\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:4004/hr/PerformanceReviews -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Review ID:', d.get\\('ID'\\), '| Period:', d.get\\('reviewPeriod'\\), '| Score:', d.get\\('overallScore'\\)\\)\")",
+      "Bash(curl -s \"http://localhost:4004/hr/getDepartmentStats\\(\\)\")",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Remaining annual leave days:', d.get\\('value'\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); e=d.get\\('error',{}\\); print\\('Error \\(expected\\):', e.get\\('message',''\\)\\)\")"
+    ]
+  }
+}

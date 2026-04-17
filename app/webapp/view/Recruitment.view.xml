@@ -1,0 +1,58 @@
+<mvc:View
+    controllerName="hr.fiori.controller.Recruitment"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page id="recruitPage" title="{i18n>recruitmentTitle}">
+        <headerContent>
+            <Button text="{i18n>newJobPosting}" icon="sap-icon://add" type="Emphasized" press=".onNewJobPosting"/>
+        </headerContent>
+        <content>
+            <!-- Job Postings Table -->
+            <Table
+                id="jobTable"
+                items="{
+                    path: '/JobPostings',
+                    parameters: { $expand: 'department', $orderby: 'createdAt desc' }
+                }"
+                growing="true" growingThreshold="10" noDataText="{i18n>noData}">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Job Postings" level="H3"/>
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://refresh" type="Transparent" press=".onRefresh"/>
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column><Text text="Job Title"/></Column>
+                    <Column><Text text="Department"/></Column>
+                    <Column><Text text="Location"/></Column>
+                    <Column><Text text="Salary Range"/></Column>
+                    <Column><Text text="Closing Date"/></Column>
+                    <Column><Text text="Status"/></Column>
+                    <Column hAlign="Center"><Text text="Actions"/></Column>
+                </columns>
+                <items>
+                    <ColumnListItem press=".onJobPress" type="Navigation">
+                        <cells>
+                            <Text text="{title}"/>
+                            <Text text="{department/name}"/>
+                            <Text text="{= ${isRemote} ? '🌍 Remote' : ${location}}"/>
+                            <Text text="${salary_min} — ${salary_max} {currency}"/>
+                            <Text text="{closingDate}"/>
+                            <ObjectStatus
+                                text="{status}"
+                                state="{= ${status} === 'Open' ? 'Success' : ${status} === 'On Hold' ? 'Warning' : 'None'}"/>
+                            <FlexBox>
+                                <Button icon="sap-icon://da" type="Transparent" press=".onGenerateDescription" tooltip="Generate Description with AI"/>
+                                <Button icon="sap-icon://employee-lookup" type="Transparent" press=".onViewApplications" tooltip="View Applications"/>
+                            </FlexBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

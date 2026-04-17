@@ -1,0 +1,92 @@
+{
+    "_version": "1.58.0",
+
+    "sap.app": {
+        "id": "hr.fiori",
+        "type": "application",
+        "title": "HR Management Portal",
+        "description": "SAP BTP CAP HR Application with AI Assistant",
+        "applicationVersion": { "version": "1.0.0" },
+        "dataSources": {
+            "HRService": {
+                "uri": "/hr/",
+                "type": "OData",
+                "settings": { "odataVersion": "4.0" }
+            }
+        }
+    },
+
+    "sap.ui": {
+        "technology": "UI5",
+        "fullWidth": true
+    },
+
+    "sap.ui5": {
+        "rootView": {
+            "viewName": "hr.fiori.view.App",
+            "type": "XML",
+            "async": true,
+            "id": "appView"
+        },
+        "dependencies": {
+            "minUI5Version": "1.120.0",
+            "libs": {
+                "sap.m": {},
+                "sap.tnt": {},
+                "sap.f": {},
+                "sap.ui.core": {},
+                "sap.ui.layout": {},
+                "sap.ui.unified": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": { "bundleName": "hr.fiori.i18n.i18n" }
+            },
+            "": {
+                "dataSource": "HRService",
+                "preload": true,
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true
+                }
+            }
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "viewType": "XML",
+                "viewPath": "hr.fiori.view",
+                "controlId": "navContainer",
+                "controlAggregation": "pages",
+                "async": true
+            },
+            "routes": [
+                { "name": "home",           "pattern": "",                        "target": "home" },
+                { "name": "employees",      "pattern": "employees",               "target": "employees" },
+                { "name": "employeeDetail", "pattern": "employees/{employeeId}",  "target": "employeeDetail" },
+                { "name": "leaveRequests",  "pattern": "leave",                   "target": "leaveRequests" },
+                { "name": "performance",    "pattern": "performance",             "target": "performance" },
+                { "name": "recruitment",    "pattern": "recruitment",             "target": "recruitment" },
+                { "name": "payroll",        "pattern": "payroll",                 "target": "payroll" },
+                { "name": "aiAssistant",    "pattern": "ai-assistant",            "target": "aiAssistant" }
+            ],
+            "targets": {
+                "home":           { "viewName": "Home",           "viewLevel": 1 },
+                "employees":      { "viewName": "Employees",      "viewLevel": 2 },
+                "employeeDetail": { "viewName": "EmployeeDetail", "viewLevel": 3 },
+                "leaveRequests":  { "viewName": "LeaveRequests",  "viewLevel": 2 },
+                "performance":    { "viewName": "Performance",    "viewLevel": 2 },
+                "recruitment":    { "viewName": "Recruitment",    "viewLevel": 2 },
+                "payroll":        { "viewName": "Payroll",        "viewLevel": 2 },
+                "aiAssistant":    { "viewName": "AIAssistant",    "viewLevel": 2 }
+            }
+        }
+    }
+}

@@ -1,0 +1,195 @@
+<!--
+    EmployeeDetail.view.xml — Employee Profile Page
+    =================================================
+    Uses sap.m.Page with an ObjectHeader showing the employee name/title.
+    IconTabBar creates tabs: Info | Leave | Performance | Payroll
+    The view is CONTEXT BOUND to one specific employee record.
+-->
+<mvc:View
+    controllerName="hr.fiori.controller.EmployeeDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form">
+
+    <Page
+        id="employeeDetailPage"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Button icon="sap-icon://nav-back" press=".onNavBack" type="Transparent"/>
+                </contentLeft>
+                <contentMiddle>
+                    <Title text="Employee Profile"/>
+                </contentMiddle>
+                <contentRight>
+                    <Button
+                        text="Generate AI Summary"
+                        icon="sap-icon://da"
+                        type="Attention"
+                        press=".onGenerateSummary"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+
+        <content>
+            <!-- Employee Header Card -->
+            <ObjectHeader
+                id="empHeader"
+                title="{empDetail>/fullName}"
+                number="{empDetail>/baseSalary}"
+                numberUnit="{empDetail>/currency}"
+                intro="{empDetail>/employeeId}"
+                iconDensityAware="false">
+                <attributes>
+                    <ObjectAttribute title="Job Title"  text="{empDetail>/jobTitle}"/>
+                    <ObjectAttribute title="Department" text="{empDetail>/departmentName}"/>
+                    <ObjectAttribute title="Start Date" text="{empDetail>/startDate}"/>
+                    <ObjectAttribute title="Email"      text="{empDetail>/email}"/>
+                </attributes>
+                <statuses>
+                    <ObjectStatus
+                        title="Employment"
+                        text="{empDetail>/employmentType}"/>
+                    <ObjectStatus
+                        title="Status"
+                        text="{empDetail>/status}"
+                        state="{= ${empDetail>/status} === 'Active' ? 'Success' : 'Warning'}"/>
+                </statuses>
+            </ObjectHeader>
+
+            <!-- AI Summary Panel -->
+            <Panel
+                visible="{= !!${empDetail>/aiSummary}}"
+                headerText="AI Profile Summary"
+                class="sapUiResponsiveMargin"
+                width="auto">
+                <content>
+                    <Text text="{empDetail>/aiSummary}" class="sapUiSmallMargin" wrapping="true"/>
+                </content>
+            </Panel>
+
+            <!-- Tab Bar with sub-sections -->
+            <IconTabBar
+                id="iconTabBar"
+                class="sapUiResponsiveContentPadding">
+
+                <!-- Tab 1: Personal Info -->
+                <items>
+                    <IconTabFilter icon="sap-icon://employee" text="Personal Info" key="info">
+                        <content>
+                            <f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+                                <f:content>
+                                    <Label text="First Name"/>   <Text text="{empDetail>/firstName}"/>
+                                    <Label text="Last Name"/>    <Text text="{empDetail>/lastName}"/>
+                                    <Label text="Email"/>        <Text text="{empDetail>/email}"/>
+                                    <Label text="Phone"/>        <Text text="{empDetail>/phone}"/>
+                                    <Label text="Date of Birth"/><Text text="{empDetail>/dateOfBirth}"/>
+                                    <Label text="Gender"/>       <Text text="{empDetail>/gender}"/>
+                                </f:content>
+                            </f:SimpleForm>
+                        </content>
+                    </IconTabFilter>
+
+                    <!-- Tab 2: Leave History -->
+                    <IconTabFilter icon="sap-icon://request" text="Leave History" key="leave">
+                        <content>
+                            <Table
+                                id="leaveHistoryTable"
+                                items="{empLeave>/}"
+                                noDataText="No leave requests found">
+                                <columns>
+                                    <Column><Text text="Type"/></Column>
+                                    <Column><Text text="From"/></Column>
+                                    <Column><Text text="To"/></Column>
+                                    <Column hAlign="End"><Text text="Days"/></Column>
+                                    <Column><Text text="Status"/></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{empLeave>leaveTypeName}"/>
+                                            <Text text="{empLeave>startDate}"/>
+                                            <Text text="{empLeave>endDate}"/>
+                                            <ObjectNumber number="{empLeave>totalDays}" unit="days"/>
+                                            <ObjectStatus
+                                                text="{empLeave>status}"
+                                                state="{= ${empLeave>status} === 'Approved' ? 'Success' : ${empLeave>status} === 'Rejected' ? 'Error' : 'Warning'}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </IconTabFilter>
+
+                    <!-- Tab 3: Performance Reviews -->
+                    <IconTabFilter icon="sap-icon://manager-insight" text="Performance" key="performance">
+                        <content>
+                            <Table
+                                id="perfTable"
+                                items="{empPerf>/}"
+                                noDataText="No performance reviews found">
+                                <columns>
+                                    <Column><Text text="Period"/></Column>
+                                    <Column hAlign="End"><Text text="Overall"/></Column>
+                                    <Column><Text text="Status"/></Column>
+                                    <Column><Text text="AI Rating"/></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{empPerf>reviewPeriod}"/>
+                                            <ObjectNumber number="{empPerf>overallScore}" unit="/5"/>
+                                            <ObjectStatus text="{empPerf>status}"/>
+                                            <ObjectStatus
+                                                text="{empPerf>aiRating}"
+                                                state="{= ${empPerf>aiRating} === 'Exceeds Expectations' ? 'Success' : 'None'}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </IconTabFilter>
+
+                    <!-- Tab 4: Payroll -->
+                    <IconTabFilter icon="sap-icon://money-bills" text="Payroll" key="payroll">
+                        <content>
+                            <Table
+                                id="payrollTable"
+                                items="{empPayroll>/}"
+                                noDataText="No payroll records found">
+                                <columns>
+                                    <Column><Text text="Period"/></Column>
+                                    <Column hAlign="End"><Text text="Base"/></Column>
+                                    <Column hAlign="End"><Text text="Bonus"/></Column>
+                                    <Column hAlign="End"><Text text="Tax"/></Column>
+                                    <Column hAlign="End"><Text text="Net Pay"/></Column>
+                                    <Column><Text text="Status"/></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{empPayroll>month}/{empPayroll>year}"/>
+                                            <ObjectNumber number="{empPayroll>baseSalary}" unit=""/>
+                                            <ObjectNumber number="{empPayroll>bonus}" unit=""/>
+                                            <ObjectNumber number="{empPayroll>tax}" unit=""/>
+                                            <ObjectNumber number="{empPayroll>netPay}" unit="USD" emphasized="true"/>
+                                            <ObjectStatus
+                                                text="{empPayroll>status}"
+                                                state="{= ${empPayroll>status} === 'Paid' ? 'Success' : 'Warning'}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </content>
+                    </IconTabFilter>
+
+                </items>
+            </IconTabBar>
+
+        </content>
+    </Page>
+</mvc:View>

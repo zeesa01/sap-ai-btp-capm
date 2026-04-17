@@ -1,0 +1,125 @@
+<!--
+    App.view.xml — The root/shell view. Always visible.
+    =====================================================
+    This is the OUTER SHELL that wraps every page in the app.
+    It provides the header bar and the side navigation.
+    The inner pages (Home, Employees, etc.) are loaded inside the NavContainer.
+
+    sap.tnt.ToolPage
+    ├── header (sap.tnt.ToolHeader)   → the blue top bar
+    ├── sideContent (sap.tnt.SideNavigation) → the left nav menu
+    └── mainContents
+        └── sap.m.NavContainer         → pages are swapped in here by the Router
+-->
+<mvc:View
+    controllerName="hr.fiori.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    displayBlock="true">
+
+    <tnt:ToolPage id="toolPage" sideExpanded="true">
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             HEADER BAR (top blue bar)
+             ═══════════════════════════════════════════════════════════════ -->
+        <tnt:header>
+            <tnt:ToolHeader>
+                <!-- Hamburger button to collapse/expand the side nav -->
+                <Button
+                    icon="sap-icon://menu2"
+                    type="Transparent"
+                    press=".onToggleSideNav"
+                    tooltip="Toggle Navigation"/>
+
+                <!-- App title -->
+                <tnt:ToolHeaderUtilitySeparator/>
+                <Title
+                    text="HR Management Portal"
+                    level="H4"
+                    titleStyle="H5"
+                    class="sapUiSmallMarginBegin"/>
+
+                <!-- Push remaining items to the right -->
+                <ToolbarSpacer/>
+
+                <!-- Current user info (in real app this reads from req.user) -->
+                <Button
+                    icon="sap-icon://person-placeholder"
+                    type="Transparent"
+                    text="HR Admin"/>
+            </tnt:ToolHeader>
+        </tnt:header>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SIDE NAVIGATION (left menu)
+             Each NavigationListItem has:
+               text  → label shown in nav
+               icon  → SAP icon name (browse all at https://sapui5.hana.ondemand.com/sdk/#/topic/icons)
+               key   → used in the controller to know which item was clicked
+             ═══════════════════════════════════════════════════════════════ -->
+        <tnt:sideContent>
+            <tnt:SideNavigation
+                id="sideNavigation"
+                itemSelect=".onNavItemSelect">
+
+                <tnt:item>
+                    <tnt:NavigationList>
+
+                        <tnt:NavigationListItem
+                            text="{i18n>navHome}"
+                            icon="sap-icon://home"
+                            key="home"/>
+
+                        <tnt:NavigationListItem
+                            text="{i18n>navEmployees}"
+                            icon="sap-icon://group"
+                            key="employees"/>
+
+                        <tnt:NavigationListItem
+                            text="{i18n>navLeave}"
+                            icon="sap-icon://request"
+                            key="leaveRequests"/>
+
+                        <tnt:NavigationListItem
+                            text="{i18n>navPerformance}"
+                            icon="sap-icon://manager-insight"
+                            key="performance"/>
+
+                        <tnt:NavigationListItem
+                            text="{i18n>navRecruitment}"
+                            icon="sap-icon://employee-lookup"
+                            key="recruitment"/>
+
+                        <tnt:NavigationListItem
+                            text="{i18n>navPayroll}"
+                            icon="sap-icon://money-bills"
+                            key="payroll"/>
+
+                    </tnt:NavigationList>
+                </tnt:item>
+
+                <!-- Fixed items at the BOTTOM of the side nav (separated visually) -->
+                <tnt:fixedItem>
+                    <tnt:NavigationList>
+                        <tnt:NavigationListItem
+                            text="{i18n>navAIAssistant}"
+                            icon="sap-icon://da"
+                            key="aiAssistant"/>
+                    </tnt:NavigationList>
+                </tnt:fixedItem>
+
+            </tnt:SideNavigation>
+        </tnt:sideContent>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             MAIN CONTENT AREA
+             The Router swaps pages in/out of this NavContainer
+             based on the URL hash (e.g. #/employees → loads Employees.view.xml)
+             ═══════════════════════════════════════════════════════════════ -->
+        <tnt:mainContents>
+            <NavContainer id="navContainer" height="100%"/>
+        </tnt:mainContents>
+
+    </tnt:ToolPage>
+</mvc:View>

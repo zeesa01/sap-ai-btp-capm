@@ -1,0 +1,55 @@
+<mvc:View
+    controllerName="hr.fiori.controller.Performance"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page id="perfPage" title="{i18n>performanceTitle}">
+        <headerContent>
+            <Button text="{i18n>newReview}" icon="sap-icon://add" type="Emphasized" press=".onNewReview"/>
+        </headerContent>
+        <content>
+            <Table
+                id="perfTable"
+                items="{
+                    path: '/PerformanceReviews',
+                    parameters: { $expand: 'employee,reviewer', $orderby: 'createdAt desc' }
+                }"
+                growing="true" growingThreshold="15" noDataText="{i18n>noData}">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Performance Reviews" level="H3"/>
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://refresh" type="Transparent" press=".onRefresh"/>
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column><Text text="Employee"/></Column>
+                    <Column><Text text="Period"/></Column>
+                    <Column><Text text="Reviewer"/></Column>
+                    <Column hAlign="End"><Text text="Overall"/></Column>
+                    <Column><Text text="Status"/></Column>
+                    <Column><Text text="AI Rating"/></Column>
+                    <Column hAlign="Center"><Text text="Actions"/></Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{employee/firstName} {employee/lastName}"/>
+                            <Text text="{reviewPeriod}"/>
+                            <Text text="{reviewer/firstName} {reviewer/lastName}"/>
+                            <ObjectNumber number="{overallScore}" unit="/5"
+                                state="{= ${overallScore} >= 4 ? 'Success' : ${overallScore} >= 3 ? 'Warning' : 'Error'}"/>
+                            <ObjectStatus text="{status}"/>
+                            <ObjectStatus
+                                text="{= ${aiRating} ? ${aiRating} : 'Not Analyzed'}"
+                                state="{= ${aiRating} === 'Exceeds Expectations' ? 'Success' : ${aiRating} === 'Below Expectations' ? 'Error' : 'None'}"/>
+                            <Button icon="sap-icon://da" type="Transparent" press=".onAnalyzeReview" tooltip="Analyze with AI"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

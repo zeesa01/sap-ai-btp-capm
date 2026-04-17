@@ -1,0 +1,23 @@
+{
+  "[development]": {
+    "auth": "dummy",
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "database": "hr-app.db"
+        }
+      }
+    }
+  },
+
+  "[production]": {
+    "auth": "xsuaa",
+    "requires": {
+      "db": {
+        "kind": "hana",
+        "deploy-format": "hdbtable"
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+ID,name,code,maxDaysPerYear,isPaid,description
+leave-type-1,Annual Leave,AL,20,true,Standard paid annual leave entitlement
+leave-type-2,Sick Leave,SL,10,true,Paid leave for illness or medical appointments
+leave-type-3,Maternity Leave,ML,90,true,Paid maternity leave for new mothers
+leave-type-4,Paternity Leave,PL,10,true,Paid paternity leave for new fathers
+leave-type-5,Unpaid Leave,UL,30,false,Unpaid leave for personal reasons
+leave-type-6,Study Leave,STL,5,true,Leave for study or professional development

@@ -1,0 +1,172 @@
+# =============================================================================
+# FILE: mta.yaml
+# PURPOSE: Multi-Target Application descriptor — tells BTP how to deploy your app.
+#
+# MTA = Multi-Target Application. It lets you package and deploy multiple
+# microservices (modules) and their dependent BTP services together.
+#
+# HOW TO BUILD AND DEPLOY:
+#   1. Install MTA Build Tool: npm install -g mbt
+#   2. Build: mbt build
+#   3. Deploy: cf deploy mta_archives/mybtpcapmaiproject_1.0.0.mtar
+#      (requires CF CLI and being logged into BTP CF environment)
+# =============================================================================
+
+_schema-version: "3.1"
+ID: mybtpcapmaiproject
+version: 1.0.0
+description: HR Application with AI on SAP BTP CAP
+
+# =============================================================================
+# PARAMETERS: Global settings
+# =============================================================================
+parameters:
+  enable-parallel-deployments: true
+
+# =============================================================================
+# MODULES: The actual applications (things that RUN)
+# =============================================================================
+modules:
+
+  # ---------------------------------------------------------------------------
+  # Module 1: The CAP Node.js server (your main application)
+  # ---------------------------------------------------------------------------
+  - name: mybtpcapmaiproject-srv
+    type: nodejs
+    path: gen/srv                         # Built output of "cds build --production"
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 512M
+
+    # Build steps run before deployment
+    build-parameters:
+      builder: npm
+      build-result: gen/srv
+      requires:
+        - name: mybtpcapmaiproject-db-deployer
+
+    # What this module needs to RUN (BTP services it consumes)
+    requires:
+      - name: mybtpcapmaiproject-hana-db    # SAP HANA Cloud database
+      - name: mybtpcapmaiproject-xsuaa      # Authentication service
+      - name: mybtpcapmaiproject-destination # Destination service (for external API calls)
+      - name: mybtpcapmaiproject-connectivity # Cloud Connector (for on-premise)
+
+    # What this module PROVIDEs (other modules can consume this)
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}           # The URL of this app after deployment
+
+    # Environment variables injected at runtime
+    properties:
+      ANTHROPIC_API_KEY: ~{anthropic-api-key/key}   # From Credential Store (see resources)
+      NODE_ENV: production
+
+
+  # ---------------------------------------------------------------------------
+  # Module 2: HANA DB Deployer
+  # This is a one-time job that runs HDI (HANA Deploy Infrastructure)
+  # to create/update your DB schema on SAP HANA Cloud.
+  # ---------------------------------------------------------------------------
+  - name: mybtpcapmaiproject-db-deployer
+    type: hdb
+    path: gen/db                          # CAP generates this from your .cds files
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: mybtpcapmaiproject-hana-db
+
+# =============================================================================
+# RESOURCES: BTP Services this app USES (they are created/bound automatically)
+# =============================================================================
+resources:
+
+  # ---------------------------------------------------------------------------
+  # Resource 1: SAP HANA Cloud Database
+  # This is your production database. Replaces SQLite.
+  #
+  # HOW IT WORKS:
+  #   CAP compiles your .cds entities into HANA tables (*.hdbtable files).
+  #   The deployer module pushes these to a "HDI Container" — a private
+  #   schema in HANA Cloud that belongs only to your app.
+  #
+  # TO SWITCH FROM SQLITE TO HANA (locally for testing):
+  #   1. Install: npm install @cap-js/hana
+  #   2. In .cdsrc.json [development] section, change "kind": "sqlite" to "kind": "hana"
+  #   3. Add VCAP_SERVICES with your HANA credentials (or use cf env to copy them)
+  # ---------------------------------------------------------------------------
+  - name: mybtpcapmaiproject-hana-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana                       # BTP service name
+      service-plan: hdi-shared            # Plan: hdi-shared = multi-tenant shared HANA
+    properties:
+      hdi-service-name: ${service-name}
+
+
+  # ---------------------------------------------------------------------------
+  # Resource 2: XSUAA — Authentication & Authorization
+  # This is SAP's OAuth2/JWT-based security service.
+  #
+  # HOW IT WORKS:
+  #   - Users log in via BTP Identity Provider (IdP)
+  #   - XSUAA issues a JWT token
+  #   - CAP validates the JWT on every request
+  #   - req.user.id gives you the logged-in user
+  #   - Roles are defined in xs-security.json
+  # ---------------------------------------------------------------------------
+  - name: mybtpcapmaiproject-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json            # Role definitions (see below)
+      config:
+        xsappname: mybtpcapmaiproject
+        tenant-mode: dedicated
+
+
+  # ---------------------------------------------------------------------------
+  # Resource 3: Destination Service
+  # Used for calling EXTERNAL APIs (like Anthropic, SAP S/4HANA, etc.)
+  # WITHOUT hardcoding URLs or credentials in your code.
+  #
+  # HOW IT WORKS:
+  #   1. You create a "Destination" in BTP Cockpit with URL + auth headers
+  #   2. Your app calls: getDestination('DESTINATION_NAME')
+  #   3. The SDK fetches the URL and injects the auth headers
+  #
+  # DESTINATIONS YOU WOULD CREATE IN BTP COCKPIT:
+  #   - ANTHROPIC_AI → https://api.anthropic.com (with API key header)
+  #   - S4HANA_SANDBOX → https://sandbox.api.sap.com (for sandbox testing)
+  #   - ON_PREMISE_SAP  → your on-premise SAP via Cloud Connector
+  # ---------------------------------------------------------------------------
+  - name: mybtpcapmaiproject-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+
+
+  # ---------------------------------------------------------------------------
+  # Resource 4: Connectivity Service
+  # Required for connecting to ON-PREMISE systems via SAP Cloud Connector.
+  #
+  # HOW ON-PREMISE CONNECTIONS WORK:
+  #   Your BTP app ←→ Connectivity Service ←→ Cloud Connector ←→ On-Premise SAP
+  #
+  # SETUP:
+  #   1. Install Cloud Connector on a machine in your on-premise network
+  #   2. Connect it to your BTP subaccount
+  #   3. Create a "System Mapping" in Cloud Connector (exposes on-prem host to BTP)
+  #   4. Create a Destination in BTP cockpit pointing to that mapping
+  #      with ProxyType: OnPremise
+  #   5. Your CAP app uses the Destination service + Connectivity service together
+  # ---------------------------------------------------------------------------
+  - name: mybtpcapmaiproject-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
