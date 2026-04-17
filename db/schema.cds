@@ -11,7 +11,7 @@
 //   - Development:  SQLite (file-based, zero config, auto-created)
 //   - BTP/Prod:     SAP HANA Cloud (see package.json and README for how to switch)
 //   CAP generates the exact same SQL DDL for both — you just change config.
-// =============================================================================
+// ============================================================================= 
 
 namespace hr; // All entities live under the "hr" namespace → table names become hr_Employees, etc.
 
